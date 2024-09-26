@@ -1,47 +1,17 @@
-- [`. dup`](#-dup)
-- [`: swap`](#-swap)
-- [`' over`](#-over)
-- [`, dupd`](#-dupd)
-- [`; swapd`](#-swapd)
-- [`´ rotu`](#-rotu)
-- [`` ` rotd ``](#-rotd-)
-- [`" string`](#-string)
-- [`# number`](#-number)
-- [`! intensity`](#-intensity)
-- [`⟟ get`](#-get)
-- [`⍼ invoke`](#-invoke)
-- [`⊏ select`](#-select)
-- [`= equals`](#-equals)
-- [`¬ not`](#-not)
-- [`∧ and`](#-and)
-- [`∨ or`](#-or)
-- [`⊻ xor`](#-xor)
-- [`⇔ eqvivalent`](#-eqvivalent)
-- [`⇒ implies`](#-implies)
-- [`∩ intersection`](#-intersection)
-- [`∪ union`](#-union)
-- [`⊂ subset`](#-subset)
-- [`⊆ subseteq`](#-subseteq)
-- [`∁ complemet`](#-complemet)
-- [`→ cause`](#-cause)
-- [`⊳ then`](#-then)
-- [`⧅ diag`](#-diag)
-- [`∀ forall`](#-forall)
-- [`∃ forall`](#-forall-1)
-- [`⧉ collect`](#-collect)
-- [`⎀ insert`](#-insert)
-- [`∵ map`](#-map)
-- [`/ reduce`](#-reduce)
-- [`\ scan`](#-scan)
-- [`‟ quote`](#-quote)
-- [`🌐 context`](#-context)
-- [`📐 measure`](#-measure)
-- [`ℹ IMPORT`](#-import)
-- [`🔀 SWITCH`](#-switch)
-- [`🗩 STATEMENT`](#-statement)
-- [`❓ QUESTION`](#-question)
-- [`🅰️ ANSWER`](#-answer)
-- [`® SET`](#-set)
+<!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
+
+- [Stack manipulation](#stack-manipulation)
+- [Literals](#literals)
+- [Basic logic operators](#basic-logic-operators)
+- [Set operators](#set-operators)
+- [Higher-order functions](#higher-order-functions)
+- [Context related](#context-related)
+- [Misc semantics](#misc-semantics)
+- [Sentence terminators](#sentence-terminators)
+
+<!-- TOC end -->
+
+
 
 
 Digit modifiers below the default are invalid
@@ -59,7 +29,10 @@ It is an error to declare a parameter outside the arity range of the operator to
 Glyph of the operation
 
 ```
----
+
+
+
+# Stack manipulation
 ## `. dup`
 1-ary (default)
 Duplicates the top element of the stack.
@@ -130,6 +103,7 @@ Example: `` `5  1 2 3 4 5 -> 5 1 2 3 4``\
 Default is 3, `` ` `` is equivalent to `` `3`` 
 
 ---
+# Literals
 ## `" string`
 0-ary\
 Places a string object on the stack.\
@@ -158,50 +132,7 @@ Example: `#3p141em3  ... -> 0.0003141 ... `
 The `0x` prefix turns `p` from a decimal point to a hexadecimal point and the base of the exponential `e` from 10 to 16.\
 Example: `#m0xAp4Ce2  ... -> -2636 ... ` $-("A"_16*16^0 + 4_16*16^-1 + C_16*16^-2) * 16^2= -2636_10$
 
----
-## `! intensity`
-1-ary\
-Adds intensity information to an object on the stack based on ten point scale 0-9, the meaning of which depends on the object.
-### Modifiers
-`[0-9]`  Encodes the intensity rating.\
-Example: `!9  I belive... -> I am absolutely certain...`\
-The default intensity is neutral and sits between 4 and 5. $<=4$ means below neutral and $>=5$ means above neutral, with 0 and 9 being the extremes.
-
-`[A]` Don't bind the first parameter  
-
----
-## `⟟ get`
-1-ary\
-Takes a string and returns the corresponding value of the context.\
-Example: ``⟟  "Edward"... -> Edward...`
-### Modifiers
-`[A]` Don't bind the first parameter
-
----
-## `⍼ invoke`
-n-ary\
-signature:`invoke(f,...)`\
-Takes a function `f` and then a number of arguments equal to the arity of `f`, calls `f` with the arguments and puts the result back on the stack.
-
-### Modifiers
-`[A]` Don't bind the first parmeter (`f`). If `f` is not bound, the arity of `f` need to be specified using the digit modifiers\
-``[0-9]`` Encodes the arity of `f`, only necessary if `f` is not bound.\
-Default: number deduced from `f`
-
-`[B-Z]` Don't bind some of the other parameters (the arguments for `f`).
-### Errors
-Error if `f` is not bound and arity of `f` is not specified.\
-Error if `f` is bound but there is a mismatch between the the actual arity of `f` and specified by the modifiers.\
-
-
----
-## `⊏ select`
-2-ary \
-signature:`select(S,p)`\
-Takes a collection `S` and a predicate `p` and returns a collection with all elements of `S` for which `p` is true.
-
-
----
+# Basic logic operators
 ## `= equals`
 2-ary (default)\
 Declares both arguments to be equal
@@ -280,6 +211,15 @@ Declares that the first argument logically implies the second.
 
 
 ---
+# Set operators
+
+## `∈ elem`
+2-ary\
+Declares that the first argument is element of  the second argument, where the second argument is a set or other type of collection.
+### Modifiers
+`[AB]`  Don't bind some of the parameters.
+
+
 ## `∩ intersection`
 2-ary (default)\
 Creates the intersection of two sets.
@@ -347,47 +287,6 @@ Declares that the first argument happens before the second argument time wise
 
 ---
 
-## `⧅ diag`
-1-ary\
-Diagonalized a 2-ary function `f`, i.e. takes in a function with arity 2 and sets both parameters equal, producing a 1-ary function. It can also take a function of any arity. In this case the `[a-z]` modifiers must be used to disambiguate which parameters of `f` will be diagonalized.
-### Modifiers
-`[a-z]` Specify which parameters of `f` will be diagonalized. The new parameter will be inserted in the parameter list at the location of the first parameter that was diagonalized.\
-Example: `⧅bd  f(w,x,y,z) -> f(w,x=z,y) `
-
-`[A]`  Don't bind `f`.  If `f` is not bound, the arity of `f` need to be specified using the digit modifiers.
-
-`[0-9]` Encodes the arity of `f`, only necessary if `f` is not bound.\
-Default: number deduced from `f`
-
----
-
-## `∀ forall`
-1-ary\
-Takes an 1-ary predicate `p` and declares that for all possible arguments the parameter of `p` could take, `p` is true, turning the predicate into a proposition. It can also take a predicate of any arity. In this case the `[a-z]` modifiers must be used to disambiguate which parameters of `p` will quantified. Then it returns an predicate without those parameters.
-### Modifiers
-`[a-z]` Specify which parameters of `p` will be quantified.\
-Example: `∀bd  p(w,x,y,z) -> p(w,y) `
-
-`[A]`  Don't bind `p`.  If `p` is not bound, the arity of `p` need to be specified using the digit modifiers.
-
-`[0-9]` Encodes the arity of `p`, only necessary if `p` is not bound.\
-Default: number deduced from `p`
-
----
-
-## `∃ forall`
-1-ary\
-Takes an 1-ary predicate `p` and declares that there exists an argument the parameter of `p` could take, `p` is true, turning the predicate into a proposition. It can also take a predicate of any arity. In this case the `[a-z]` modifiers must be used to disambiguate which parameters of `p` will quantified. Then it returns an predicate without those parameters.
-### Modifiers
-`[a-z]` Specify which parameters of `p` will be quantified. \
-Example: `∃bd  p(w,x,y,z) -> p(w,y) ` 
-
-`[A]`  Don't bind `p`.  If `p` is not bound, the arity of `p` need to be specified using the digit modifiers.
-
-`[0-9]` Encodes the arity of `p`, only necessary if `p` is not bound.\
-Default: number deduced from `p`
-
----
 ## `⧉ collect`
 n-ary\
 Collects the top n elements of the stack into a collection, where n is given by the digit modifiers. Error if n is not given.
@@ -404,6 +303,15 @@ Take a collection and insert the top n elements of the stack, where n is given b
 `[A]`  Don't bind the first parameter.
 
 ---
+# Higher-order functions
+
+## `⊏ select`
+2-ary \
+signature:`select(S,p)`\
+Takes a collection `S` and a predicate `p` and returns a collection with all elements of `S` for which `p` is true.
+
+---
+
 ## `∵ map`
 2-ary\
 Takes a 1-ary function `f` and a collection `S`  , invokes `f` for each element of `S` and puts the results into a new collection.\
@@ -431,6 +339,73 @@ Example: `∵  f(x,y) {1, 2, 3, 4} -> {1,f(1,2),f(f(1,2) 3),f(f(f(1,2),3),4)}`
 ### Modifiers
 `[AB]`  Don't bind some of the parameters.
 
+
+---
+## `∀ forall`
+1-ary\
+Takes an 1-ary predicate `p` and declares that for all possible arguments the parameter of `p` could take, `p` is true, turning the predicate into a proposition. It can also take a predicate of any arity. In this case the `[a-z]` modifiers must be used to disambiguate which parameters of `p` will quantified. Then it returns an predicate without those parameters.
+### Modifiers
+`[a-z]` Specify which parameters of `p` will be quantified.\
+Example: `∀bd  p(w,x,y,z) -> p(w,y) `
+
+`[A]`  Don't bind `p`.  If `p` is not bound, the arity of `p` need to be specified using the digit modifiers.
+
+`[0-9]` Encodes the arity of `p`, only necessary if `p` is not bound.\
+Default: number deduced from `p`
+
+---
+
+## `∃ forall`
+1-ary\
+Takes an 1-ary predicate `p` and declares that there exists an argument the parameter of `p` could take, `p` is true, turning the predicate into a proposition. It can also take a predicate of any arity. In this case the `[a-z]` modifiers must be used to disambiguate which parameters of `p` will quantified. Then it returns an predicate without those parameters.
+### Modifiers
+`[a-z]` Specify which parameters of `p` will be quantified. \
+Example: `∃bd  p(w,x,y,z) -> p(w,y) ` 
+
+`[A]`  Don't bind `p`.  If `p` is not bound, the arity of `p` need to be specified using the digit modifiers.
+
+`[0-9]` Encodes the arity of `p`, only necessary if `p` is not bound.\
+Default: number deduced from `p`
+
+
+---
+## `⧅ diag`
+1-ary\
+Diagonalized a 2-ary function `f`, i.e. takes in a function with arity 2 and sets both parameters equal, producing a 1-ary function. It can also take a function of any arity. In this case the `[a-z]` modifiers must be used to disambiguate which parameters of `f` will be diagonalized.
+### Modifiers
+`[a-z]` Specify which parameters of `f` will be diagonalized. The new parameter will be inserted in the parameter list at the location of the first parameter that was diagonalized.\
+Example: `⧅bd  f(w,x,y,z) -> f(w,x=z,y) `
+
+`[A]`  Don't bind `f`.  If `f` is not bound, the arity of `f` need to be specified using the digit modifiers.
+
+`[0-9]` Encodes the arity of `f`, only necessary if `f` is not bound.\
+Default: number deduced from `f`
+
+---
+## `⍼ invoke`
+n-ary\
+signature:`invoke(f,...)`\
+Takes a function `f` and then a number of arguments equal to the arity of `f`, calls `f` with the arguments and puts the result back on the stack.
+
+### Modifiers
+`[A]` Don't bind the first parmeter (`f`). If `f` is not bound, the arity of `f` need to be specified using the digit modifiers\
+``[0-9]`` Encodes the arity of `f`, only necessary if `f` is not bound.\
+Default: number deduced from `f`
+
+`[B-Z]` Don't bind some of the other parameters (the arguments for `f`).
+### Errors
+Error if `f` is not bound and arity of `f` is not specified.\
+Error if `f` is bound but there is a mismatch between the the actual arity of `f` and specified by the modifiers.\
+
+---
+# Context related
+## `⟟ get`
+1-ary\
+Takes a string and returns the corresponding value of the context.\
+Example: ``⟟  "Edward"... -> Edward...`
+### Modifiers
+`[A]` Don't bind the first parameter
+
 ---
 
 ## `‟ quote`
@@ -445,32 +420,63 @@ Takes an object or set of objects as a definition for a context to construct. Pl
 
 ---
 
+# Misc semantics
+## `! intensity`
+1-ary\
+Adds intensity information to an object on the stack based on ten point scale 0-9, the meaning of which depends on the object.
+### Modifiers
+`[0-9]`  Encodes the intensity rating.\
+Example: `!9  I belive... -> I am absolutely certain...`\
+The default intensity is neutral and sits between 4 and 5. $<=4$ means below neutral and $>=5$ means above neutral, with 0 and 9 being the extremes.
+
+`[A]` Don't bind the first parameter  
+
+---
 ## `📐 measure`
 2-ary\
-Takes an object and a measure function and returns the result of measuring the object with the fuction.\
+Takes an object and a measure function and returns the result of measuring the object with the function.\
 Example: `📐  Edward ilove(x) -> How much I love Edward`
 
 ---
+# Sentence terminators
 
 ## `ℹ IMPORT`
+1-ary\
+Takes a string and import the library with that name into the context.
 
 ---
 
 ## `🔀 SWITCH`
+1-ary\
+Take a context object and replace the current context with the new one. When a context switch is done, the previous context can be accessed with `"prvctx⟟
 
 ---
 
 ## `🗩 STATEMENT`
+1-ary\
+Takes a proposition and asserts its truthfulness in the current context.
 
 ---
 
 ## `❓ QUESTION`
+1-ary\
+Takes a predicate `p` and asks what values it's parameters should take such that it's true. Leaves the function on the stack for the answer.\
+Example `❓  p(x) -> p(x?)`
+
+### Modifiers
+`[a-z]` Specify which parameters of `p` are asked about. Default is all.
 
 ---
 
 ## `🅰️ ANSWER`
+1-ary
+An answer sentence has to bind some or all of the parameters of the 
+`❓ QUESTION`-predicate, that is still on the stack, using `⍼ invoke`. Leaves the answered predicate on the stack for further operations.\
+Example: `⍼🅰️  p(x?) 1 -> p(1)`
 
 ---
 
 ## `® SET`
+2-ary
+Takes a string `k` and an object `v` and sets the value in the context corresponding to the key `k` to `v`. This value can be retrieved later using `⟟ get`
 
